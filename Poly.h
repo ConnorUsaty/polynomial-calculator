@@ -13,10 +13,12 @@ private:
 public:
 	// Constructors & Destructors
 	Poly();
+	Poly(const std::string& poly);
 	Poly(const std::vector<int>& deg, const std::vector<double>& coeff);
 	~Poly();
 
 	// Methods
+	map<int, int, greater<int>> parsePoly(const std::string& poly);
 	void addMono(int i, double c);
 	void addPoly(const Poly& p);
 	void multiplyMono(int i, double c);

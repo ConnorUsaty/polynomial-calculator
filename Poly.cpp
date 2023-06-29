@@ -1,4 +1,6 @@
 #include "Poly.h"
+#include <map>
+#include <sstream>
 
 using namespace std;
 
@@ -10,7 +12,28 @@ Poly::Poly()
 }
 
 
+Poly::Poly(const string& poly) {
+
+	// Parse the polynomial string and store the coefficients and powers in a map
+    map<int, int, greater<int>> polyMap = parsePoly(poly);
+
+	// Dummy header
+	head = new PolyNode(-1,0,NULL);
+
+	// Pointer to iterate through
+	PolyNode* p = head;
+
+	// Iterate through sorted map creating all nodes
+	for (const auto& term : polyMap) {
+        p->next = new PolyNode(term.second,term.first,NULL);
+		p = p->next;
+    }
+}
+
+
 Poly::Poly(const std::vector<int>& deg, const std::vector<double>& coeff)
+// Creates a Poly from two vectors of ints and doubles
+// Assumes vectors are sorted in descending order
 {
 	int length = deg.size();
 
@@ -45,6 +68,41 @@ Poly::~Poly()
 	delete p;
 }
 
+map<int, int, greater<int>> Poly::parsePoly(const string& poly) {
+
+	map<int, int, greater<int>> polyMap;    // Create a map to store the coefficients and powers of the polynomial
+    istringstream iss(poly);    // Create an input string stream to tokenize the polynomial string
+    string term;    // Variable to store each term of the polynomial
+
+    // Iterate through each term of the polynomial separated by the '+' delimiter
+    while (getline(iss, term, '+')) {
+
+        size_t powerPos = term.find('^');    // Find the position of '^' character in the term
+        size_t coefficientPos = term.find('x');    // Find the position of 'x' character in the term
+
+        // If both the '^' and 'x' characters are found in the term
+        if (powerPos != string::npos && coefficientPos != string::npos) {
+            int coefficient = stoi(term.substr(0, coefficientPos));    // Extract the substring before 'x' as coefficient
+            int power = stoi(term.substr(powerPos + 1));    // Extract the substring after '^' as power
+
+            polyMap[power] = coefficient;    // Insert the coefficient and power into the polynomial map
+        }
+        
+        // If only the 'x' character is found in the term -> power is 1
+        else if (powerPos == string::npos && coefficientPos != string::npos) {
+            int coefficient = stoi(term.substr(0, coefficientPos));    // Extract the substring before 'x' as coefficient
+
+            polyMap[1] = coefficient;    // Insert the coefficient and power as 1 into the polynomial map
+        } 
+        
+        // If neither the '^' nor 'x' characters are found in the term -> power is 0
+        else {
+            polyMap[0] = stoi(term);    // Insert the term as coefficient and power as 0 into the polynomial map
+        }
+    }
+	// Return the sorted polynomial map
+	return polyMap;
+}
 
 void Poly::addMono(int i, double c)
 // O(n) at max it loops through LL once
