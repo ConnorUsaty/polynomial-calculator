@@ -6,11 +6,11 @@ class PolyNode {
 public:
 	// Attributes
 	int deg;
-	double coeff;
+	int coeff;
 	PolyNode* next;
 
 	// Constructor
-	PolyNode(int d, double c, PolyNode* n) {
+	PolyNode(int d, int c, PolyNode* n) {
 		deg = d;
 		coeff = c;
 		next = n;

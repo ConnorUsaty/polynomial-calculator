@@ -4,6 +4,8 @@
 #include "PolyNode.h"
 #include <vector>
 #include <string>
+#include <map>
+
 
 class Poly {
 
@@ -18,7 +20,7 @@ public:
 	~Poly();
 
 	// Methods
-	map<int, int, greater<int>> parsePoly(const std::string& poly);
+	std::map<int, int> parsePoly(const std::string& poly);
 	void addMono(int i, double c);
 	void addPoly(const Poly& p);
 	void multiplyMono(int i, double c);

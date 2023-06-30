@@ -15,7 +15,7 @@ Poly::Poly()
 Poly::Poly(const string& poly) {
 
 	// Parse the polynomial string and store the coefficients and powers in a map
-    map<int, int, greater<int>> polyMap = parsePoly(poly);
+    map<int, int> polyMap = parsePoly(poly);
 
 	// Dummy header
 	head = new PolyNode(-1,0,NULL);
@@ -25,7 +25,7 @@ Poly::Poly(const string& poly) {
 
 	// Iterate through sorted map creating all nodes
 	for (const auto& term : polyMap) {
-        p->next = new PolyNode(term.second,term.first,NULL);
+        p->next = new PolyNode(term.first,term.second,NULL);
 		p = p->next;
     }
 }
@@ -68,9 +68,9 @@ Poly::~Poly()
 	delete p;
 }
 
-map<int, int, greater<int>> Poly::parsePoly(const string& poly) {
+map<int, int> Poly::parsePoly(const string& poly) {
 
-	map<int, int, greater<int>> polyMap;    // Create a map to store the coefficients and powers of the polynomial
+	map<int, int> polyMap;    // Create a map to store the coefficients and powers of the polynomial
     istringstream iss(poly);    // Create an input string stream to tokenize the polynomial string
     string term;    // Variable to store each term of the polynomial
 
@@ -314,17 +314,14 @@ std::string Poly::toString()
 
 	PolyNode* p = head->next;
 
-	output += "degree=";
-	output += to_string(getDegree());
-	output += ";";
-
-	while (p != NULL) {
-		output += " a(";
-		output += to_string(p->deg);
-		output += ")=";
-		output += to_string(p->coeff);
-		output += ";";
+	// All terms except last
+	while (p->next != NULL) {
+		output += to_string(p->coeff) + "x^" + to_string(p->deg) + "+";
+		p = p->next;
 	}
+
+	// Last term
+	output += to_string(p->coeff) + "x^" + to_string(p->deg);
 
 	return output;
 }
